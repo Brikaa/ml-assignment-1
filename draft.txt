@@ -1,0 +1,9 @@
+linear_model = LinearModel.create(no_features=4)
+  .add_feature_column(col1)
+  .add_feature_column(col2)
+  .add_feature_column(col3)
+  .add_feature_column(col4)
+  .add_target_column(col5)
+  .train()
+
+output = lienar_model.predict(feature_vec)
