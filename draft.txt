@@ -7,3 +7,76 @@ linear_model = LinearModel.create(no_features=4)
   .train()
 
 output = lienar_model.predict(feature_vec)
+
+==========================================================
+
+Using Python Pandas, numpy, seaborn (and possibly scikit-learn):
+- Load a CSV file called "loan_old.csv" (it has the following columns: Loan_ID,Gender,Married,Dependents,
+  Education,Income,Coapplicant_Income,Loan_Tenor,Credit_History,Property_Area,Max_Loan_Amount,Loan_Status)
+- Separate the columns called "Max_Loan_Amount" and "Loan_Status" (the target columns) from the rest of the columns
+  (the feature columns)
+- Check if there are records with missing values
+  - If there are, remove them (and print a message)
+- Shuffle the data and split it into training and testing sets
+- Check the type of each feature and target column (categorical or numerical)
+  - Print the type
+  - If categorical feature or target column: label encode it
+  - If numerical feature column: print its maximum, mean and minimum and standardize it
+- Visualize the numerical feature columns as a seaborn pairplot
+- If you need more context or details, let me know
+
+==============================================================
+
+- https://stackoverflow.com/questions/54906553/differentiating-between-numerical-and-categorical-columns
+  - Credit history might be categorical
+
+==============================================================
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+
+def log(msg):
+    print(msg, file=stderr)
+
+def main():
+    df = pd.read_csv("loan_old.csv")
+
+    if df.isnull().sum().any():
+        log("Found missing values")
+        df.dropna(inplace=True)
+
+    features_df = df.drop(columns=["Max_Loan_Amount", "Loan_Status"])
+    target_df = df[["Max_Loan_Amount", "Loan_Status"]]
+
+    # Check the type of each feature and target column
+    for col in features_df.columns:
+        col_type = "categorical" if features_df[col].dtype == "object" else "numerical"
+        log(f"{col}: {col_type}")
+
+        # Label encode categorical feature columns
+        if col_type == "categorical":
+            le = LabelEncoder()
+            features_df[col] = le.fit_transform(features_df[col])
+
+    for col in target_df.columns:
+        col_type = "categorical" if target_df[col].dtype == "object" else "numerical"
+        print(f"{col}: {col_type}")
+
+        # Label encode categorical target columns
+        if col_type == "categorical":
+            le = LabelEncoder()
+            target_df[col] = le.fit_transform(target_df[col])
+
+    # Standardize numerical feature columns
+    numerical_cols = features_df.select_dtypes(include=["float64", "int64"]).columns
+    scaler = StandardScaler()
+    features_df[numerical_cols] = scaler.fit_transform(features_df[numerical_cols])
+
+    # Visualize the numerical feature columns as a seaborn pairplot
+    sns.pairplot(features_df[numerical_cols])
+
+
+if __name__ == "__main__":
+    main()
