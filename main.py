@@ -1,6 +1,8 @@
 import sys
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 def log(msg):
@@ -12,21 +14,20 @@ def main():
     df.drop(columns=["Loan_ID"], inplace=True)
 
     empty = df.isnull().sum().sum()
-    log("There are " + str(empty) + " empty values, dropping them.")
+    log("There are " + str(empty) + " empty values, dropping rows containing them.")
     df.dropna(inplace=True)
 
     features_df = df.drop(columns=["Max_Loan_Amount", "Loan_Status"])
     targets_df = df[["Max_Loan_Amount", "Loan_Status"]]
 
-    log("Types of the features:")
-    for col in features_df.columns:
-        t = "categorical" if features_df[col].dtype == "object" else "numerical"
-        log(f"\t- {col} is {t}")
-        if t == "numerical":
-            log("\t\tScale:")
-            log(f"\t\t- max: {features_df[col].max()}" )
-            log(f"\t\t- min: {features_df[col].min()}" )
-            log(f"\t\t- mean: {features_df[col].mean()}" )
+    categorical_df = features_df.select_dtypes(include=["object"])
+    numerical_df = features_df.select_dtypes(include=["int64", "float64"])
+    log("Categorical features:")
+    for col in categorical_df.columns:
+        log(f"\t- {col}")
+    log("Numerical features:")
+    for col in numerical_df.columns:
+        log(f"\t- {col} ({numerical_df[col].min()} - {numerical_df[col].max()})")
 
     test_size = 0.2
     train_size = 1 - test_size
@@ -49,6 +50,8 @@ def main():
         random_state=30,
     )
 
+    sns.pairplot(numerical_df)
+    plt.show()
 
 
 if __name__ == "__main__":
