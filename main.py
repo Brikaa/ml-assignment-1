@@ -5,34 +5,15 @@ from sklearn.model_selection import train_test_split
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 
 
 def log(msg):
     print(msg, file=sys.stderr)
 
 
-def main():
-    df = pd.read_csv("loan_old.csv")
-    df.drop(columns=["Loan_ID"], inplace=True)
-
-    empty = df.isnull().sum().sum()
-    log("There are " + str(empty) + " empty values, dropping rows containing them.")
-    df.dropna(inplace=True)
-
-    features_df = df.drop(columns=["Max_Loan_Amount", "Loan_Status"])
-    targets_df = df[["Max_Loan_Amount", "Loan_Status"]]
-
-    categorical_features_df = features_df.select_dtypes(include=["object"])
-    numerical_features_df = features_df.select_dtypes(exclude=["object"])
-    log("Categorical features:")
-    for col in categorical_features_df.columns:
-        log(f"\t- {col}")
-    log("Numerical features:")
-    for col in numerical_features_df.columns:
-        log(
-            f"\t- {col} ({numerical_features_df[col].min()} - {numerical_features_df[col].max()})"
-        )
-
+def fit_models(features_df, targets_df):
     test_size = 0.2
     train_size = 1 - test_size
     log(
@@ -77,6 +58,12 @@ def main():
                 f"\t- After: {np.min(features_train[col])} to {np.max(features_train[col])}"
             )
 
+    log("Fitting a linear model")
+    linear_model = LinearRegression()
+    linear_model.fit(features_train, max_loan_train)
+    log(linear_model.feature_names_in_)
+    log(linear_model.coef_)
+
     log(f"Encoding Loan_Status")
     loan_status_encoder = LabelEncoder()
     loan_status_train = pd.Series(
@@ -85,6 +72,36 @@ def main():
     )
     log(f"\t- Before: {loan_status_encoder.classes_}")
     log(f"\t- After: {np.unique(loan_status_train)}")
+
+
+def preprocess_df(df):
+    df.drop(columns=["Loan_ID"], inplace=True)
+
+    empty = df.isnull().sum().sum()
+    log("There are " + str(empty) + " empty values, dropping rows containing them.")
+    df.dropna(inplace=True)
+
+
+def main():
+    df = pd.read_csv("loan_old.csv")
+    log("Preprocessing loan_old")
+    preprocess_df(df)
+
+    features_df = df.drop(columns=["Max_Loan_Amount", "Loan_Status"])
+    targets_df = df[["Max_Loan_Amount", "Loan_Status"]]
+
+    categorical_features_df = features_df.select_dtypes(include=["object"])
+    numerical_features_df = features_df.select_dtypes(exclude=["object"])
+    log("Categorical features:")
+    for col in categorical_features_df.columns:
+        log(f"\t- {col}")
+    log("Numerical features:")
+    for col in numerical_features_df.columns:
+        log(
+            f"\t- {col} ({numerical_features_df[col].min()} - {numerical_features_df[col].max()})"
+        )
+
+    fit_models(features_df, targets_df)
 
     sns.pairplot(numerical_features_df)
     plt.show()
