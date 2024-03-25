@@ -1,8 +1,10 @@
 import sys
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 
 def log(msg):
@@ -20,14 +22,16 @@ def main():
     features_df = df.drop(columns=["Max_Loan_Amount", "Loan_Status"])
     targets_df = df[["Max_Loan_Amount", "Loan_Status"]]
 
-    categorical_df = features_df.select_dtypes(include=["object"])
-    numerical_df = features_df.select_dtypes(include=["int64", "float64"])
+    categorical_features_df = features_df.select_dtypes(include=["object"])
+    numerical_features_df = features_df.select_dtypes(exclude=["object"])
     log("Categorical features:")
-    for col in categorical_df.columns:
+    for col in categorical_features_df.columns:
         log(f"\t- {col}")
     log("Numerical features:")
-    for col in numerical_df.columns:
-        log(f"\t- {col} ({numerical_df[col].min()} - {numerical_df[col].max()})")
+    for col in numerical_features_df.columns:
+        log(
+            f"\t- {col} ({numerical_features_df[col].min()} - {numerical_features_df[col].max()})"
+        )
 
     test_size = 0.2
     train_size = 1 - test_size
@@ -50,7 +54,39 @@ def main():
         random_state=30,
     )
 
-    sns.pairplot(numerical_df)
+    label_encoders = {}
+    standard_scalers = {}
+
+    for col in features_train.columns:
+        if features_train[col].dtype == "object":
+            log(f"Encoding {col}")
+            label_encoders[col] = LabelEncoder()
+            features_train[col] = label_encoders[col].fit_transform(features_train[col])
+            log(f"\t- Before: {label_encoders[col].classes_}")
+            log(f"\t- After: {np.unique(features_train[col])}")
+        else:
+            log(f"Standardizing {col}")
+            log(
+                f"\t- Before: {np.min(features_train[col])} to {np.max(features_train[col])}"
+            )
+            standard_scalers[col] = StandardScaler()
+            features_train[col] = standard_scalers[col].fit_transform(
+                features_train[[col]]
+            )
+            log(
+                f"\t- After: {np.min(features_train[col])} to {np.max(features_train[col])}"
+            )
+
+    log(f"Encoding Loan_Status")
+    loan_status_encoder = LabelEncoder()
+    loan_status_train = pd.Series(
+        loan_status_encoder.fit_transform(loan_status_train),
+        name=loan_status_train.name,
+    )
+    log(f"\t- Before: {loan_status_encoder.classes_}")
+    log(f"\t- After: {np.unique(loan_status_train)}")
+
+    sns.pairplot(numerical_features_df)
     plt.show()
 
 
