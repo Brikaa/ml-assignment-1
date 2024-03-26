@@ -15,3 +15,5 @@ Steps
           (1/(1 + e ** (-parameters_vector . feature_vectors[i])) - target_vector[i]) * feature_vectors[i][j]
           for i in range len(feature_vectors)
         )
+
+chromium print options: portrait, A1, scale:175, no headers/footers, background graphics
