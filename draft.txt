@@ -1,2 +1,17 @@
 - Fit a logistic regression model on the training data to predict the loan status
+  - I have a set of feature vectors (set of horizontal vectors)
+  - I have a target vector (vertical) (Loan_Status)
+  - I have an initial parameters (weights) vector (horizontal)
 
+wj_improved = wj - α*sum((sigmoid(parameters_vector . feature_vectors[i]) - target_vector[i]) * feature_vectors[i][j])
+
+Steps
+  - Pick a learning rate (the training data contains about 614 rows. So pick a learning rate and I'll tune it)
+  - Generate an initial parameters (weights) vector whose length is the length of a features vector
+    (len(processed_features_train.columns) or something like that)
+  - for j in range len(parameters_vector):
+    - parameters_vector[j] -=
+        learning_rate * sum(
+          (1/(1 + e ** (-parameters_vector . feature_vectors[i])) - target_vector[i]) * feature_vectors[i][j]
+          for i in range len(feature_vectors)
+        )
