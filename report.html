@@ -7546,6 +7546,7 @@ a.anchor-link {
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span><span class="p">,</span> <span class="n">StandardScaler</span>
 <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
 </pre></div>
 </div>
 </div>
@@ -7610,12 +7611,7 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">preprocess_df</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
-    <span class="n">clean_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"Loan_ID"</span><span class="p">])</span> <span class="c1"># No need for id as well</span>
-    <span class="n">clean_df</span> <span class="o">=</span> <span class="n">clean_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">clean_df</span>
-
-<span class="n">clean_df</span> <span class="o">=</span> <span class="n">preprocess_df</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">clean_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"Loan_ID"</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">display</span><span class="p">(</span><span class="n">clean_df</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -9041,16 +9037,10 @@ R^2 score: -0.5251056058080019
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">new_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"loan_new.csv"</span><span class="p">)</span>
-<span class="n">new_df_processed</span> <span class="o">=</span> <span class="n">preprocess_df</span><span class="p">(</span><span class="n">new_df</span><span class="p">)</span>
-<span class="n">new_features_processed</span> <span class="o">=</span> <span class="n">preprocess_new_features</span><span class="p">(</span><span class="n">label_encoders</span><span class="p">,</span> <span class="n">standard_scalers</span><span class="p">,</span> <span class="n">new_df_processed</span><span class="p">)</span>
-<span class="n">new_maximum_loan_amounts</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">new_features_processed</span><span class="p">)</span>
-<span class="n">new_loan_statuses</span> <span class="o">=</span> <span class="n">lg_predict</span><span class="p">(</span><span class="n">lg_weights</span><span class="p">,</span> <span class="n">new_features_processed</span><span class="p">)</span>
-
-<span class="n">new_df_processed</span><span class="p">[</span><span class="s2">"Max_Loan_Amount"</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_maximum_loan_amounts</span>
-<span class="n">new_df_processed</span><span class="p">[</span><span class="s2">"Loan_Status"</span><span class="p">]</span> <span class="o">=</span> <span class="n">loan_status_encoder</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">new_loan_statuses</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">'display.max_rows'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">new_df_processed</span><span class="p">)</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">reset_option</span><span class="p">(</span><span class="s1">'display.max_rows'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">new_df_processed</span> <span class="o">=</span> <span class="n">new_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">new_features_processed</span> <span class="o">=</span> <span class="n">preprocess_new_features</span><span class="p">(</span>
+    <span class="n">label_encoders</span><span class="p">,</span> <span class="n">standard_scalers</span><span class="p">,</span> <span class="n">new_df_processed</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"Loan_ID"</span><span class="p">])</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -9093,6 +9083,45 @@ Encoding Property_Area
 </pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h1 id="Use-your-models-on-this-data-to-predict-the-loan-amounts-and-status">Use your models on this data to predict the loan amounts and status<a class="anchor-link" href="#Use-your-models-on-this-data-to-predict-the-loan-amounts-and-status">¶</a></h1>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">new_maximum_loan_amounts</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">new_features_processed</span><span class="p">)</span>
+<span class="n">new_loan_statuses</span> <span class="o">=</span> <span class="n">lg_predict</span><span class="p">(</span><span class="n">lg_weights</span><span class="p">,</span> <span class="n">new_features_processed</span><span class="p">)</span>
+
+<span class="n">new_df_processed</span><span class="p">[</span><span class="s2">"Max_Loan_Amount"</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_maximum_loan_amounts</span>
+<span class="n">new_df_processed</span><span class="p">[</span><span class="s2">"Loan_Status"</span><span class="p">]</span> <span class="o">=</span> <span class="n">loan_status_encoder</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span>
+    <span class="n">new_loan_statuses</span>
+<span class="p">)</span>
+<span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">option_context</span><span class="p">(</span><span class="s2">"display.max_rows"</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">new_df_processed</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
@@ -9114,6 +9143,7 @@ Encoding Property_Area
 <thead>
 <tr style="text-align: right;">
 <th></th>
+<th>Loan_ID</th>
 <th>Gender</th>
 <th>Married</th>
 <th>Dependents</th>
@@ -9130,6 +9160,7 @@ Encoding Property_Area
 <tbody>
 <tr>
 <th>0</th>
+<td>LP001015</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9144,6 +9175,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>1</th>
+<td>LP001022</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -9158,6 +9190,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>2</th>
+<td>LP001031</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -9172,6 +9205,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>4</th>
+<td>LP001051</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9186,6 +9220,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>5</th>
+<td>LP001054</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9200,6 +9235,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>6</th>
+<td>LP001055</td>
 <td>Female</td>
 <td>No</td>
 <td>1</td>
@@ -9214,6 +9250,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>7</th>
+<td>LP001056</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -9228,6 +9265,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>8</th>
+<td>LP001059</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -9242,6 +9280,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>9</th>
+<td>LP001067</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9256,6 +9295,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>10</th>
+<td>LP001078</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9270,6 +9310,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>11</th>
+<td>LP001082</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -9284,6 +9325,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>13</th>
+<td>LP001094</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -9298,6 +9340,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>14</th>
+<td>LP001096</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -9312,6 +9355,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>15</th>
+<td>LP001099</td>
 <td>Male</td>
 <td>No</td>
 <td>1</td>
@@ -9326,6 +9370,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>16</th>
+<td>LP001105</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -9340,6 +9385,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>17</th>
+<td>LP001107</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -9354,6 +9400,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>18</th>
+<td>LP001108</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9368,6 +9415,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>19</th>
+<td>LP001115</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9382,6 +9430,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>20</th>
+<td>LP001121</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -9396,6 +9445,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>21</th>
+<td>LP001124</td>
 <td>Female</td>
 <td>No</td>
 <td>3+</td>
@@ -9410,6 +9460,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>23</th>
+<td>LP001135</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -9424,6 +9475,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>24</th>
+<td>LP001149</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9438,6 +9490,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>25</th>
+<td>LP001153</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9452,6 +9505,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>27</th>
+<td>LP001169</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9466,6 +9520,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>29</th>
+<td>LP001176</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9480,6 +9535,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>30</th>
+<td>LP001177</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -9494,6 +9550,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>31</th>
+<td>LP001183</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -9508,6 +9565,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>32</th>
+<td>LP001185</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9522,6 +9580,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>33</th>
+<td>LP001187</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9536,6 +9595,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>34</th>
+<td>LP001190</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9550,6 +9610,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>35</th>
+<td>LP001203</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9564,6 +9625,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>36</th>
+<td>LP001208</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -9578,6 +9640,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>37</th>
+<td>LP001210</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9592,6 +9655,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>38</th>
+<td>LP001211</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9606,6 +9670,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>39</th>
+<td>LP001219</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9620,6 +9685,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>40</th>
+<td>LP001220</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9634,6 +9700,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>41</th>
+<td>LP001221</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -9648,6 +9715,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>42</th>
+<td>LP001226</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9662,6 +9730,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>43</th>
+<td>LP001230</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9676,6 +9745,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>44</th>
+<td>LP001231</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -9690,6 +9760,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>47</th>
+<td>LP001242</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9704,6 +9775,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>49</th>
+<td>LP001270</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -9718,6 +9790,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>50</th>
+<td>LP001284</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -9732,6 +9805,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>52</th>
+<td>LP001291</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -9746,6 +9820,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>53</th>
+<td>LP001298</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -9760,6 +9835,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>54</th>
+<td>LP001312</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9774,6 +9850,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>55</th>
+<td>LP001313</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9788,6 +9865,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>56</th>
+<td>LP001317</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -9802,6 +9880,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>57</th>
+<td>LP001321</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -9816,6 +9895,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>58</th>
+<td>LP001323</td>
 <td>Female</td>
 <td>Yes</td>
 <td>2</td>
@@ -9830,6 +9910,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>59</th>
+<td>LP001324</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -9844,6 +9925,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>60</th>
+<td>LP001332</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9858,6 +9940,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>61</th>
+<td>LP001335</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9872,6 +9955,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>62</th>
+<td>LP001338</td>
 <td>Female</td>
 <td>No</td>
 <td>2</td>
@@ -9886,6 +9970,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>63</th>
+<td>LP001347</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -9900,6 +9985,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>64</th>
+<td>LP001348</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -9914,6 +10000,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>65</th>
+<td>LP001351</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9928,6 +10015,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>66</th>
+<td>LP001352</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9942,6 +10030,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>67</th>
+<td>LP001358</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9956,6 +10045,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>68</th>
+<td>LP001359</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9970,6 +10060,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>69</th>
+<td>LP001361</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -9984,6 +10075,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>71</th>
+<td>LP001368</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -9998,6 +10090,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>72</th>
+<td>LP001375</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -10012,6 +10105,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>73</th>
+<td>LP001380</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10026,6 +10120,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>74</th>
+<td>LP001386</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10040,6 +10135,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>75</th>
+<td>LP001400</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10054,6 +10150,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>76</th>
+<td>LP001407</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10068,6 +10165,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>77</th>
+<td>LP001413</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10082,6 +10180,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>78</th>
+<td>LP001415</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -10096,6 +10195,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>79</th>
+<td>LP001419</td>
 <td>Female</td>
 <td>Yes</td>
 <td>0</td>
@@ -10110,6 +10210,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>80</th>
+<td>LP001420</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -10124,6 +10225,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>81</th>
+<td>LP001428</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -10138,6 +10240,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>82</th>
+<td>LP001445</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -10152,6 +10255,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>83</th>
+<td>LP001446</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10166,6 +10270,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>84</th>
+<td>LP001450</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10180,6 +10285,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>85</th>
+<td>LP001452</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -10194,6 +10300,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>86</th>
+<td>LP001455</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10208,6 +10315,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>87</th>
+<td>LP001466</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10222,6 +10330,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>88</th>
+<td>LP001471</td>
 <td>Male</td>
 <td>No</td>
 <td>2</td>
@@ -10236,6 +10345,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>89</th>
+<td>LP001472</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -10250,6 +10360,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>91</th>
+<td>LP001483</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -10264,6 +10375,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>92</th>
+<td>LP001486</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -10278,6 +10390,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>93</th>
+<td>LP001490</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -10292,6 +10405,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>94</th>
+<td>LP001496</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -10306,6 +10420,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>95</th>
+<td>LP001499</td>
 <td>Female</td>
 <td>Yes</td>
 <td>3+</td>
@@ -10320,6 +10435,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>96</th>
+<td>LP001500</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -10334,6 +10450,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>97</th>
+<td>LP001501</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10348,6 +10465,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>98</th>
+<td>LP001517</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -10362,6 +10480,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>100</th>
+<td>LP001534</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10376,6 +10495,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>101</th>
+<td>LP001542</td>
 <td>Female</td>
 <td>Yes</td>
 <td>0</td>
@@ -10390,6 +10510,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>102</th>
+<td>LP001547</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -10404,6 +10525,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>103</th>
+<td>LP001548</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -10418,6 +10540,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>105</th>
+<td>LP001561</td>
 <td>Female</td>
 <td>Yes</td>
 <td>0</td>
@@ -10432,6 +10555,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>107</th>
+<td>LP001567</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -10446,6 +10570,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>108</th>
+<td>LP001568</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10460,6 +10585,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>109</th>
+<td>LP001573</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10474,6 +10600,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>110</th>
+<td>LP001584</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -10488,6 +10615,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>112</th>
+<td>LP001589</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -10502,6 +10630,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>113</th>
+<td>LP001591</td>
 <td>Female</td>
 <td>Yes</td>
 <td>2</td>
@@ -10516,6 +10645,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>114</th>
+<td>LP001599</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10530,6 +10660,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>116</th>
+<td>LP001607</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -10544,6 +10675,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>118</th>
+<td>LP001613</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -10558,6 +10690,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>119</th>
+<td>LP001622</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -10572,6 +10705,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>120</th>
+<td>LP001627</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10586,6 +10720,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>121</th>
+<td>LP001650</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10600,6 +10735,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>122</th>
+<td>LP001651</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -10614,6 +10750,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>123</th>
+<td>LP001652</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10628,6 +10765,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>124</th>
+<td>LP001655</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -10642,6 +10780,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>125</th>
+<td>LP001660</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10656,6 +10795,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>126</th>
+<td>LP001662</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10670,6 +10810,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>127</th>
+<td>LP001663</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -10684,6 +10825,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>128</th>
+<td>LP001667</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10698,6 +10840,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>130</th>
+<td>LP001703</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10712,6 +10855,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>131</th>
+<td>LP001718</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10726,6 +10870,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>132</th>
+<td>LP001728</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -10740,6 +10885,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>133</th>
+<td>LP001735</td>
 <td>Female</td>
 <td>No</td>
 <td>1</td>
@@ -10754,6 +10900,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>134</th>
+<td>LP001737</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10768,6 +10915,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>135</th>
+<td>LP001739</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10782,6 +10930,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>136</th>
+<td>LP001742</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -10796,6 +10945,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>137</th>
+<td>LP001757</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -10810,6 +10960,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>140</th>
+<td>LP001785</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10824,6 +10975,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>141</th>
+<td>LP001787</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -10838,6 +10990,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>142</th>
+<td>LP001789</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -10852,6 +11005,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>144</th>
+<td>LP001794</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -10866,6 +11020,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>145</th>
+<td>LP001797</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -10880,6 +11035,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>146</th>
+<td>LP001815</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10894,6 +11050,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>147</th>
+<td>LP001817</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10908,6 +11065,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>148</th>
+<td>LP001818</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -10922,6 +11080,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>149</th>
+<td>LP001822</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10936,6 +11095,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>150</th>
+<td>LP001827</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10950,6 +11110,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>151</th>
+<td>LP001831</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -10964,6 +11125,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>152</th>
+<td>LP001842</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -10978,6 +11140,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>153</th>
+<td>LP001853</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -10992,6 +11155,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>154</th>
+<td>LP001855</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11006,6 +11170,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>155</th>
+<td>LP001857</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -11020,6 +11185,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>156</th>
+<td>LP001862</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11034,6 +11200,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>157</th>
+<td>LP001867</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11048,6 +11215,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>158</th>
+<td>LP001878</td>
 <td>Male</td>
 <td>No</td>
 <td>1</td>
@@ -11062,6 +11230,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>159</th>
+<td>LP001881</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11076,6 +11245,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>160</th>
+<td>LP001886</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -11090,6 +11260,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>161</th>
+<td>LP001906</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -11104,6 +11275,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>162</th>
+<td>LP001909</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -11118,6 +11290,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>163</th>
+<td>LP001911</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -11132,6 +11305,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>165</th>
+<td>LP001923</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -11146,6 +11320,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>166</th>
+<td>LP001933</td>
 <td>Male</td>
 <td>No</td>
 <td>2</td>
@@ -11160,6 +11335,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>167</th>
+<td>LP001943</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11174,6 +11350,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>168</th>
+<td>LP001950</td>
 <td>Female</td>
 <td>Yes</td>
 <td>3+</td>
@@ -11188,6 +11365,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>169</th>
+<td>LP001959</td>
 <td>Female</td>
 <td>Yes</td>
 <td>1</td>
@@ -11202,6 +11380,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>170</th>
+<td>LP001961</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -11216,6 +11395,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>171</th>
+<td>LP001973</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11230,6 +11410,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>172</th>
+<td>LP001975</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11244,6 +11425,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>173</th>
+<td>LP001979</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -11258,6 +11440,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>174</th>
+<td>LP001995</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11272,6 +11455,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>175</th>
+<td>LP001999</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11286,6 +11470,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>176</th>
+<td>LP002007</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11300,6 +11485,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>178</th>
+<td>LP002016</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11314,6 +11500,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>180</th>
+<td>LP002018</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11328,6 +11515,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>181</th>
+<td>LP002027</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11342,6 +11530,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>182</th>
+<td>LP002028</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11356,6 +11545,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>183</th>
+<td>LP002042</td>
 <td>Female</td>
 <td>Yes</td>
 <td>1</td>
@@ -11370,6 +11560,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>186</th>
+<td>LP002047</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11384,6 +11575,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>187</th>
+<td>LP002056</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11398,6 +11590,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>188</th>
+<td>LP002057</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11412,6 +11605,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>189</th>
+<td>LP002059</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11426,6 +11620,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>190</th>
+<td>LP002062</td>
 <td>Female</td>
 <td>Yes</td>
 <td>1</td>
@@ -11440,6 +11635,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>191</th>
+<td>LP002064</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -11454,6 +11650,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>192</th>
+<td>LP002069</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11468,6 +11665,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>193</th>
+<td>LP002070</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -11482,6 +11680,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>194</th>
+<td>LP002077</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -11496,6 +11695,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>195</th>
+<td>LP002083</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -11510,6 +11710,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>196</th>
+<td>LP002090</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -11524,6 +11725,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>197</th>
+<td>LP002096</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11538,6 +11740,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>198</th>
+<td>LP002099</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11552,6 +11755,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>199</th>
+<td>LP002102</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11566,6 +11770,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>200</th>
+<td>LP002105</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11580,6 +11785,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>201</th>
+<td>LP002107</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -11594,6 +11800,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>203</th>
+<td>LP002117</td>
 <td>Female</td>
 <td>Yes</td>
 <td>0</td>
@@ -11608,6 +11815,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>204</th>
+<td>LP002118</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -11622,6 +11830,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>205</th>
+<td>LP002123</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11636,6 +11845,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>206</th>
+<td>LP002125</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -11650,6 +11860,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>207</th>
+<td>LP002148</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -11664,6 +11875,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>208</th>
+<td>LP002152</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -11678,6 +11890,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>210</th>
+<td>LP002167</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -11692,6 +11905,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>211</th>
+<td>LP002168</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -11706,6 +11920,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>212</th>
+<td>LP002172</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -11720,6 +11935,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>213</th>
+<td>LP002176</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -11734,6 +11950,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>215</th>
+<td>LP002184</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11748,6 +11965,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>216</th>
+<td>LP002186</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11762,6 +11980,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>217</th>
+<td>LP002192</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11776,6 +11995,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>218</th>
+<td>LP002195</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -11790,6 +12010,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>219</th>
+<td>LP002208</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -11804,6 +12025,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>221</th>
+<td>LP002240</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11818,6 +12040,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>222</th>
+<td>LP002245</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -11832,6 +12055,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>223</th>
+<td>LP002253</td>
 <td>Female</td>
 <td>No</td>
 <td>1</td>
@@ -11846,6 +12070,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>224</th>
+<td>LP002256</td>
 <td>Female</td>
 <td>No</td>
 <td>2</td>
@@ -11860,6 +12085,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>225</th>
+<td>LP002257</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -11874,6 +12100,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>226</th>
+<td>LP002264</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11888,6 +12115,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>227</th>
+<td>LP002270</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -11902,6 +12130,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>228</th>
+<td>LP002279</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -11916,6 +12145,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>229</th>
+<td>LP002286</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -11930,6 +12160,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>230</th>
+<td>LP002294</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -11944,6 +12175,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>232</th>
+<td>LP002306</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -11958,6 +12190,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>233</th>
+<td>LP002310</td>
 <td>Female</td>
 <td>No</td>
 <td>1</td>
@@ -11972,6 +12205,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>234</th>
+<td>LP002311</td>
 <td>Female</td>
 <td>Yes</td>
 <td>0</td>
@@ -11986,6 +12220,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>235</th>
+<td>LP002316</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12000,6 +12235,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>236</th>
+<td>LP002321</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -12014,6 +12250,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>237</th>
+<td>LP002325</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -12028,6 +12265,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>238</th>
+<td>LP002326</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -12042,6 +12280,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>239</th>
+<td>LP002329</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12056,6 +12295,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>240</th>
+<td>LP002333</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12070,6 +12310,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>241</th>
+<td>LP002339</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -12084,6 +12325,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>242</th>
+<td>LP002344</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -12098,6 +12340,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>243</th>
+<td>LP002346</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -12112,6 +12355,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>244</th>
+<td>LP002354</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -12126,6 +12370,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>246</th>
+<td>LP002358</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -12140,6 +12385,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>248</th>
+<td>LP002375</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -12154,6 +12400,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>249</th>
+<td>LP002376</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12168,6 +12415,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>250</th>
+<td>LP002383</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -12182,6 +12430,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>252</th>
+<td>LP002389</td>
 <td>Female</td>
 <td>No</td>
 <td>1</td>
@@ -12196,6 +12445,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>253</th>
+<td>LP002394</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -12210,6 +12460,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>254</th>
+<td>LP002397</td>
 <td>Female</td>
 <td>Yes</td>
 <td>1</td>
@@ -12224,6 +12475,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>255</th>
+<td>LP002399</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12238,6 +12490,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>256</th>
+<td>LP002400</td>
 <td>Female</td>
 <td>Yes</td>
 <td>0</td>
@@ -12252,6 +12505,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>257</th>
+<td>LP002402</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -12266,6 +12520,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>258</th>
+<td>LP002412</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -12280,6 +12535,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>260</th>
+<td>LP002417</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -12294,6 +12550,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>261</th>
+<td>LP002420</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -12308,6 +12565,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>263</th>
+<td>LP002433</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -12322,6 +12580,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>264</th>
+<td>LP002440</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -12336,6 +12595,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>266</th>
+<td>LP002442</td>
 <td>Female</td>
 <td>Yes</td>
 <td>1</td>
@@ -12350,6 +12610,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>267</th>
+<td>LP002445</td>
 <td>Female</td>
 <td>No</td>
 <td>1</td>
@@ -12364,6 +12625,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>268</th>
+<td>LP002450</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -12378,6 +12640,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>269</th>
+<td>LP002471</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12392,6 +12655,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>270</th>
+<td>LP002476</td>
 <td>Female</td>
 <td>Yes</td>
 <td>3+</td>
@@ -12406,6 +12670,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>271</th>
+<td>LP002482</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -12420,6 +12685,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>272</th>
+<td>LP002485</td>
 <td>Male</td>
 <td>No</td>
 <td>1</td>
@@ -12434,6 +12700,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>273</th>
+<td>LP002495</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -12448,6 +12715,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>274</th>
+<td>LP002496</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -12462,6 +12730,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>275</th>
+<td>LP002523</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -12476,6 +12745,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>276</th>
+<td>LP002542</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -12490,6 +12760,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>277</th>
+<td>LP002550</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -12504,6 +12775,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>278</th>
+<td>LP002551</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -12518,6 +12790,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>280</th>
+<td>LP002554</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12532,6 +12805,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>281</th>
+<td>LP002561</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -12546,6 +12820,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>283</th>
+<td>LP002568</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12560,6 +12835,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>284</th>
+<td>LP002570</td>
 <td>Female</td>
 <td>Yes</td>
 <td>2</td>
@@ -12574,6 +12850,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>285</th>
+<td>LP002572</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -12588,6 +12865,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>287</th>
+<td>LP002584</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12602,6 +12880,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>288</th>
+<td>LP002592</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12616,6 +12895,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>289</th>
+<td>LP002593</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -12630,6 +12910,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>290</th>
+<td>LP002599</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -12644,6 +12925,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>291</th>
+<td>LP002604</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -12658,6 +12940,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>292</th>
+<td>LP002605</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12672,6 +12955,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>293</th>
+<td>LP002609</td>
 <td>Female</td>
 <td>Yes</td>
 <td>0</td>
@@ -12686,6 +12970,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>294</th>
+<td>LP002610</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -12700,6 +12985,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>295</th>
+<td>LP002612</td>
 <td>Female</td>
 <td>Yes</td>
 <td>0</td>
@@ -12714,6 +13000,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>297</th>
+<td>LP002630</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12728,6 +13015,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>298</th>
+<td>LP002635</td>
 <td>Female</td>
 <td>Yes</td>
 <td>2</td>
@@ -12742,6 +13030,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>299</th>
+<td>LP002639</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -12756,6 +13045,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>300</th>
+<td>LP002644</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -12770,6 +13060,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>301</th>
+<td>LP002651</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -12784,6 +13075,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>304</th>
+<td>LP002711</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -12798,6 +13090,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>306</th>
+<td>LP002721</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -12812,6 +13105,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>307</th>
+<td>LP002735</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -12826,6 +13120,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>308</th>
+<td>LP002744</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -12840,6 +13135,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>309</th>
+<td>LP002745</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -12854,6 +13150,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>310</th>
+<td>LP002746</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12868,6 +13165,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>311</th>
+<td>LP002747</td>
 <td>Female</td>
 <td>No</td>
 <td>3+</td>
@@ -12882,6 +13180,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>313</th>
+<td>LP002759</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -12896,6 +13195,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>314</th>
+<td>LP002760</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -12910,6 +13210,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>315</th>
+<td>LP002766</td>
 <td>Female</td>
 <td>Yes</td>
 <td>0</td>
@@ -12924,6 +13225,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>316</th>
+<td>LP002769</td>
 <td>Female</td>
 <td>Yes</td>
 <td>0</td>
@@ -12938,6 +13240,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>317</th>
+<td>LP002774</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -12952,6 +13255,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>319</th>
+<td>LP002781</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -12966,6 +13270,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>320</th>
+<td>LP002782</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -12980,6 +13285,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>321</th>
+<td>LP002786</td>
 <td>Female</td>
 <td>Yes</td>
 <td>0</td>
@@ -12994,6 +13300,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>322</th>
+<td>LP002790</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -13008,6 +13315,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>323</th>
+<td>LP002791</td>
 <td>Male</td>
 <td>No</td>
 <td>1</td>
@@ -13022,6 +13330,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>324</th>
+<td>LP002793</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -13036,6 +13345,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>326</th>
+<td>LP002803</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -13050,6 +13360,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>327</th>
+<td>LP002805</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -13064,6 +13375,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>328</th>
+<td>LP002806</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -13078,6 +13390,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>330</th>
+<td>LP002823</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -13092,6 +13405,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>331</th>
+<td>LP002825</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -13106,6 +13420,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>332</th>
+<td>LP002826</td>
 <td>Female</td>
 <td>Yes</td>
 <td>1</td>
@@ -13120,6 +13435,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>333</th>
+<td>LP002843</td>
 <td>Female</td>
 <td>Yes</td>
 <td>0</td>
@@ -13134,6 +13450,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>334</th>
+<td>LP002849</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -13148,6 +13465,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>335</th>
+<td>LP002850</td>
 <td>Male</td>
 <td>No</td>
 <td>2</td>
@@ -13162,6 +13480,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>337</th>
+<td>LP002856</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -13176,6 +13495,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>338</th>
+<td>LP002857</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -13190,6 +13510,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>339</th>
+<td>LP002858</td>
 <td>Female</td>
 <td>No</td>
 <td>0</td>
@@ -13204,6 +13525,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>340</th>
+<td>LP002860</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -13218,6 +13540,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>341</th>
+<td>LP002867</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -13232,6 +13555,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>342</th>
+<td>LP002869</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -13246,6 +13570,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>343</th>
+<td>LP002870</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -13260,6 +13585,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>344</th>
+<td>LP002876</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -13274,6 +13600,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>345</th>
+<td>LP002878</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -13288,6 +13615,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>346</th>
+<td>LP002879</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -13302,6 +13630,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>347</th>
+<td>LP002885</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -13316,6 +13645,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>348</th>
+<td>LP002890</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -13330,6 +13660,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>349</th>
+<td>LP002891</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -13344,6 +13675,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>350</th>
+<td>LP002899</td>
 <td>Male</td>
 <td>Yes</td>
 <td>2</td>
@@ -13358,6 +13690,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>352</th>
+<td>LP002907</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -13372,6 +13705,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>353</th>
+<td>LP002920</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -13386,6 +13720,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>354</th>
+<td>LP002921</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -13400,6 +13735,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>355</th>
+<td>LP002932</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -13414,6 +13750,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>356</th>
+<td>LP002935</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -13428,6 +13765,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>357</th>
+<td>LP002952</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -13442,6 +13780,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>359</th>
+<td>LP002962</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
@@ -13456,6 +13795,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>361</th>
+<td>LP002969</td>
 <td>Male</td>
 <td>Yes</td>
 <td>1</td>
@@ -13470,6 +13810,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>362</th>
+<td>LP002971</td>
 <td>Male</td>
 <td>Yes</td>
 <td>3+</td>
@@ -13484,6 +13825,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>363</th>
+<td>LP002975</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -13498,6 +13840,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>365</th>
+<td>LP002986</td>
 <td>Male</td>
 <td>Yes</td>
 <td>0</td>
@@ -13512,6 +13855,7 @@ Encoding Property_Area
 </tr>
 <tr>
 <th>366</th>
+<td>LP002989</td>
 <td>Male</td>
 <td>No</td>
 <td>0</td>
