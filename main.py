@@ -75,7 +75,7 @@ train_size = 1 - test_size
     targets_df["Loan_Status"],
     test_size=test_size,
     train_size=train_size,
-    random_state=30,
+    random_state=12,
 )
 
 print("Features training set")
